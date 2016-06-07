@@ -94,7 +94,10 @@ public abstract class AbstractExpressionVisitor<R,D> implements ExpressionVisito
   @Override
   public <E> R visit(FunctionExpression<E> f, D data) { return defaultVisit(f, data); }
   
-  
+  public <E> R visit(SelectExpression<E> se, D data) { return defaultVisit(se, data); }
+
+  public <E> R visit(StoreExpression<E> se, D data) { return defaultVisit(se, data); }
+
   /* (non-Javadoc)
    * @see gov.nasa.jpf.constraints.api.ExpressionVisitor#visit(gov.nasa.jpf.constraints.expressions.BitvectorExpression, java.lang.Object)
    */
