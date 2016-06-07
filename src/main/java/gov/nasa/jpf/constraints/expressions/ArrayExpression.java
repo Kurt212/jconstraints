@@ -31,8 +31,35 @@ public class ArrayExpression<E> extends Variable<E> {
         this.length = Variable.create(BuiltinTypes.SINT32, name+"_length");
     }
 
+    public ArrayExpression(Type<E> type, int l) {
+        super(type);
+        this.length = Constant.create(BuiltinTypes.SINT32, l);
+    }
+
+    public static <E> String getNewName(ArrayExpression<E> prev) {
+        String newName = prev.getName();
+        if (newName.indexOf("!") == -1) {
+            newName = newName + "!1";
+        } else {
+            int aux = Integer.parseInt(newName.substring(newName.indexOf("!") + 1));
+            newName = newName.substring(0, newName.indexOf("!") + 1) + (aux + 1);
+        }
+        return newName;
+    }
+
+    public ArrayExpression(ArrayExpression<E> prev) {
+        super(prev.getType(), getNewName(prev));
+        this.length = prev.length;
+    }
+        
+
+
     public static <E> ArrayExpression<E> create(Type<E> type, String name) {
         return new ArrayExpression<E>(type, name);
+    }
+
+    public static <E> ArrayExpression<E> create(Type<E> type, int l) {
+       return new ArrayExpression<E>(type, l);
     }
 
     public void print(Appendable a, int flags) throws IOException {

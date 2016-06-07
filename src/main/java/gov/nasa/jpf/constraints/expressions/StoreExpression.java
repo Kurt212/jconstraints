@@ -29,18 +29,20 @@ import java.util.Collection;
 * Array theory store expression
 */
 public class StoreExpression<E> extends AbstractExpression<E> {
-    ArrayExpression<E> arrayExpression;
-    Expression<Integer> indexExpression;
-    Expression<E> value;
+    public ArrayExpression<E> arrayExpression;
+    public Expression<Integer> indexExpression;
+    public Expression<E> value;
+    public ArrayExpression<E> newArrayExpression;
 
-    public StoreExpression(ArrayExpression<E> ae, Expression<Integer> ie, Expression<E> v) {
+    public StoreExpression(ArrayExpression<E> ae, Expression<Integer> ie, Expression<E> v, ArrayExpression<E> nae) {
         this.arrayExpression = ae;
         this.indexExpression = ie;
         this.value = v;
+        this.newArrayExpression = nae;
     }
 
     public void print(Appendable a, int flags) throws IOException {
-        arrayExpression.print(a, flags);
+        newArrayExpression.print(a, flags);
         a.append('[');
         indexExpression.print(a, flags);
         a.append("] = ");
@@ -48,7 +50,6 @@ public class StoreExpression<E> extends AbstractExpression<E> {
     }
 
     public void collectFreeVariables(Collection<? super Variable<?>> variables) {
-        arrayExpression.collectFreeVariables(variables);
         indexExpression.collectFreeVariables(variables);
         value.collectFreeVariables(variables);
     }
@@ -62,16 +63,16 @@ public class StoreExpression<E> extends AbstractExpression<E> {
 
 
     public Expression<?> duplicate(Expression<?>[] newChildren) {
-        assert newChildren.length == 3;
+        assert newChildren.length == 4;
         
-        if (identical(newChildren, arrayExpression, indexExpression, value))
+        if (identical(newChildren, arrayExpression, indexExpression, value, newArrayExpression))
             return this;
         
-        return new StoreExpression((ArrayExpression)newChildren[0], newChildren[1], newChildren[2]);
+        return new StoreExpression((ArrayExpression)newChildren[0], newChildren[1], newChildren[2], (ArrayExpression)newChildren[3]);
     }
 
     public Expression<E>[] getChildren() {
-        return new Expression[]{arrayExpression, indexExpression, value};
+        return new Expression[]{arrayExpression, indexExpression, value, newArrayExpression};
     }
 
     public Type<E> getType() {

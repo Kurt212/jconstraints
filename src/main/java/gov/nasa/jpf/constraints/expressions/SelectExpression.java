@@ -29,8 +29,8 @@ import java.util.Collection;
 * Array theory select expression
 */
 public class SelectExpression<E> extends AbstractExpression<E> {
-    ArrayExpression<E> arrayExpression;
-    Expression<Integer> indexExpression;
+    public ArrayExpression<E> arrayExpression;
+    public Expression<Integer> indexExpression;
 
     public SelectExpression(ArrayExpression<E> ae, Expression<Integer> ie) {
         this.arrayExpression = ae;
@@ -45,7 +45,6 @@ public class SelectExpression<E> extends AbstractExpression<E> {
     }
 
     public void collectFreeVariables(Collection<? super Variable<?>> variables) {
-        arrayExpression.collectFreeVariables(variables);
         indexExpression.collectFreeVariables(variables);
     }
 
