@@ -28,13 +28,16 @@ import java.util.Collection;
 /**
 * Array theory select expression
 */
-public class SelectExpression<E> extends AbstractExpression<E> {
-    public ArrayExpression<E> arrayExpression;
+public class SelectExpression<E> extends AbstractBoolExpression {
+    public ArrayExpression<E[]> arrayExpression;
     public Expression<Integer> indexExpression;
 
-    public SelectExpression(ArrayExpression<E> ae, Expression<Integer> ie) {
+    public Expression<E> value;
+
+    public SelectExpression(ArrayExpression<E[]> ae, Expression<Integer> ie, Expression<E> val) {
         this.arrayExpression = ae;
         this.indexExpression = ie;
+        this.value = val;
     }
 
     public void print(Appendable a, int flags) throws IOException {
@@ -45,32 +48,31 @@ public class SelectExpression<E> extends AbstractExpression<E> {
     }
 
     public void collectFreeVariables(Collection<? super Variable<?>> variables) {
+        arrayExpression.collectFreeVariables(variables);
         indexExpression.collectFreeVariables(variables);
+        value.collectFreeVariables(variables);
     }
 
-    public E evaluate(Valuation values) {
-        E ae = arrayExpression.evaluate(values);
+    public Boolean evaluate(Valuation values) {
+        E[] ae = arrayExpression.evaluate(values);
         int ie = indexExpression.evaluate(values);
+        E val = value.evaluate(values);
 // TODO correct here
-        return ae;
+        return (ae[ie] == val);
     }
 
 
     public Expression<?> duplicate(Expression<?>[] newChildren) {
-        assert newChildren.length == 2;
+        assert newChildren.length == 3;
         
-        if (identical(newChildren, arrayExpression, indexExpression))
+        if (identical(newChildren, arrayExpression, indexExpression, value))
             return this;
         
-        return new SelectExpression((ArrayExpression)newChildren[0], newChildren[1]);
+        return new SelectExpression((ArrayExpression)newChildren[0], newChildren[1], newChildren[3]);
     }
 
     public Expression<E>[] getChildren() {
         return new Expression[]{arrayExpression, indexExpression};
-    }
-
-    public Type<E> getType() {
-        return arrayExpression.getType();
     }
 
     public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {

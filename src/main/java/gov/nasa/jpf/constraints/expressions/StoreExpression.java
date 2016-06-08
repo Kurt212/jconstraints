@@ -28,13 +28,13 @@ import java.util.Collection;
 /**
 * Array theory store expression
 */
-public class StoreExpression<E> extends AbstractExpression<E> {
-    public ArrayExpression<E> arrayExpression;
+public class StoreExpression<E> extends AbstractBoolExpression {
+    public ArrayExpression<E[]> arrayExpression;
     public Expression<Integer> indexExpression;
     public Expression<E> value;
-    public ArrayExpression<E> newArrayExpression;
+    public ArrayExpression<E[]> newArrayExpression;
 
-    public StoreExpression(ArrayExpression<E> ae, Expression<Integer> ie, Expression<E> v, ArrayExpression<E> nae) {
+    public StoreExpression(ArrayExpression<E[]> ae, Expression<Integer> ie, Expression<E> v, ArrayExpression<E[]> nae) {
         this.arrayExpression = ae;
         this.indexExpression = ie;
         this.value = v;
@@ -50,15 +50,20 @@ public class StoreExpression<E> extends AbstractExpression<E> {
     }
 
     public void collectFreeVariables(Collection<? super Variable<?>> variables) {
+        arrayExpression.collectFreeVariables(variables);
         indexExpression.collectFreeVariables(variables);
         value.collectFreeVariables(variables);
+        newArrayExpression.collectFreeVariables(variables);
     }
 
-    public E evaluate(Valuation values) {
-        E ae = arrayExpression.evaluate(values);
+    public Boolean evaluate(Valuation values) {
+        E[] ae = arrayExpression.evaluate(values);
         int ie = indexExpression.evaluate(values);
+        E val = value.evaluate(values);
+        ae[ie] = val;
+        E[] nae = newArrayExpression.evaluate(values);
 // TODO correct here
-        return ae;
+        return (nae == ae);
     }
 
 
@@ -75,9 +80,6 @@ public class StoreExpression<E> extends AbstractExpression<E> {
         return new Expression[]{arrayExpression, indexExpression, value, newArrayExpression};
     }
 
-    public Type<E> getType() {
-        return arrayExpression.getType();
-    }
 
     public <R, D> R accept(ExpressionVisitor<R, D> visitor, D data) {
         return visitor.visit(this, data);
