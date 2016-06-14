@@ -50,10 +50,8 @@ public class StoreExpression<E> extends AbstractBoolExpression {
     }
 
     public void collectFreeVariables(Collection<? super Variable<?>> variables) {
-        arrayExpression.collectFreeVariables(variables);
         indexExpression.collectFreeVariables(variables);
         value.collectFreeVariables(variables);
-        newArrayExpression.collectFreeVariables(variables);
     }
 
     public Boolean evaluate(Valuation values) {
