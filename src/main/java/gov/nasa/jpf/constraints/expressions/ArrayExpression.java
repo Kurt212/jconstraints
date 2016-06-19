@@ -25,15 +25,22 @@ import java.io.IOException;
 
 public class ArrayExpression<E> extends Variable<E> {
     public Expression<Integer> length;
+    private String elemType = "?";
 
     public ArrayExpression(Type<E> type, String name) {
         super(type, name);
         this.length = Variable.create(BuiltinTypes.SINT32, name+"_length");
     }
 
-    public ArrayExpression(Type<E> type, int l) {
-        super(type);
+    public ArrayExpression(Type<E> type, String name, int l) {
+        super(type, name);
         this.length = Constant.create(BuiltinTypes.SINT32, l);
+    }
+
+    public ArrayExpression(Type<E> type, String name, String arrayType) {
+        super(type, name);
+        this.length = Variable.create(BuiltinTypes.SINT32, name+"_length");
+        this.elemType = arrayType;
     }
 
     public static <E> String getNewName(ArrayExpression<E> prev) {
@@ -50,16 +57,23 @@ public class ArrayExpression<E> extends Variable<E> {
     public ArrayExpression(ArrayExpression<E> prev) {
         super(prev.getType(), getNewName(prev));
         this.length = prev.length;
+        this.elemType = prev.getElemType();
     }
         
-
+    public String getElemType() {
+        return elemType;
+    }
 
     public static <E> ArrayExpression<E> create(Type<E> type, String name) {
         return new ArrayExpression<E>(type, name);
     }
 
-    public static <E> ArrayExpression<E> create(Type<E> type, int l) {
-       return new ArrayExpression<E>(type, l);
+    public static <E> ArrayExpression<E> create(Type<E> type, String name, String arrayType) {
+        return new ArrayExpression<E>(type, name, arrayType);
+    }
+
+    public static <E> ArrayExpression<E> create(Type<E> type, String name, int l) {
+       return new ArrayExpression<E>(type, name, l);
     }
 
     public void print(Appendable a, int flags) throws IOException {
