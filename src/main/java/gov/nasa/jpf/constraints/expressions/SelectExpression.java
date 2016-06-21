@@ -44,7 +44,8 @@ public class SelectExpression<E> extends AbstractBoolExpression {
         arrayExpression.print(a, flags);
         a.append('[');
         indexExpression.print(a, flags);
-        a.append(']');
+        a.append("] = ");
+        value.print(a, flags);
     }
 
     public void collectFreeVariables(Collection<? super Variable<?>> variables) {

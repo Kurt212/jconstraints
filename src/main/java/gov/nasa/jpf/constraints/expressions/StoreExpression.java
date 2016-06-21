@@ -45,7 +45,7 @@ public class StoreExpression<E> extends AbstractBoolExpression {
         newArrayExpression.print(a, flags);
         a.append('[');
         indexExpression.print(a, flags);
-        a.append("] = ");
+        a.append("] <- ");
         value.print(a, flags);
     }
 
