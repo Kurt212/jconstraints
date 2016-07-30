@@ -54,6 +54,15 @@ public class ArrayExpression<E> extends Variable<E> {
         return newName;
     }
 
+    public <E> String getRootName() {
+        if (this.getName().indexOf("!") == -1) {
+            return this.getName();
+        } else {
+            return this.getName().substring(0, this.getName().indexOf("!"));
+        }
+
+    }
+
     public ArrayExpression(ArrayExpression<E> prev) {
         super(prev.getType(), getNewName(prev));
         this.length = prev.length;
